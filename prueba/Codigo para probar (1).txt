@@ -1,0 +1,13 @@
+PAQUETE a %
+PRIVADO CLASE @CLASE {
+#var REAL %
+PUBLICO REAL $MET <- #vare ENTERO-> {
+IMPRIMIR <- #b (-) #c -> %
+ ENTERO #a:+  #b (-) #c  %
+LEER #var %
+MIENTRAS <- #term (+) #tt << #termino &: #term (+) #tt << #termino ->{ }
+SI <- #term (+) #tt << #termino -> { }
+@CLASE.$METODO <-  -> %
+RETORNO #a %
+}
+}

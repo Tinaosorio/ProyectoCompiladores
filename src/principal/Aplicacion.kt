@@ -3,11 +3,9 @@ package principal
 import gui.VentanaCompilador
 
 /**
-  * @author Valentina osorio
-
  * Clase que permite la ejecución del programa de compilador
  *
-
+ * @author valentina osorio
  */
 object Aplicacion {
 

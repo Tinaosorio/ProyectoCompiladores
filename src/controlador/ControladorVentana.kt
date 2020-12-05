@@ -1,4 +1,6 @@
 package controlador
+
+
 import java.awt.BorderLayout
 import java.awt.Color
 import java.io.BufferedReader
@@ -21,15 +23,18 @@ import javax.swing.tree.DefaultTreeModel
 
 import gui.VentanaCompilador
 import lexico.AnalizadorLexico
-
-import sintactico.AnalizadorSintactico
-
+import lexico.Token
+import semantico.AnalizadorSemantico
+import semantico.TablaSimbolos
+import sintaxis.AnalizadorSintactico
+import sintaxis.ErrorSintactico
+import traductor.Traductor
 
 /**
- *  * @author Valentina osorio
-
  * Esta clase se encarga de controlar la interfaz grafica y sus eventos
-
+ *
+ *
+ * @author valentina osorio
  */
 class ControladorVentana
 /**
@@ -170,8 +175,69 @@ class ControladorVentana
             print("jklhaf")
             agregarArbolVisual()
 
+            if (ventanaCompilador.analizadorSintactico!!.tablaErrores?.size  == 0) {
+                val errores = ArrayList<String?>()
+                ventanaCompilador.analizadorSemantico = AnalizadorSemantico(ventanaCompilador.analizadorSintactico!!.unidadDeCompilacion,
+                        TablaSimbolos(errores), errores)
+                ventanaCompilador.analizadorSemantico!!.llenarTablaSimbolos()
+                ventanaCompilador.analizadorSemantico!!.analizarSemantica()
+                agregarErroresSemanticos()
+                //if (ventanaCompilador.getAnalizadorSemantico().getErrores().size() == 0) {
+                ventanaCompilador.isCompilado = true
+                val f = File("src/" + ventanaCompilador.analizadorSintactico?.unidadDeCompilacion
+                        ?.clase?.getIdentificador_clase()?.lexema?.substring(1) + ".class")
+                f.delete()
+                //}
+            }
         }
 
+    }
+
+    fun ejecutar() {
+        if (ventanaCompilador.isCompilado) {
+            try {
+                val f = File("src/" + ventanaCompilador.analizadorSintactico?.unidadDeCompilacion
+                        ?.clase?.getIdentificador_clase()!!.lexema!!.substring(1) + ".java")
+                val fw = FileWriter(f)
+                val traducto = Traductor(
+                        ventanaCompilador.analizadorSintactico?.unidadDeCompilacion)
+                fw.write(traducto.traducir())
+                fw.flush()
+                fw.close()
+                val comando = ("javac.exe" + " " + ventanaCompilador.analizadorSintactico
+                        ?.unidadDeCompilacion?.clase?.getIdentificador_clase()!!.lexema!!.substring(1)
+                        + ".java")
+                val comando0 = "java.exe" + " " + ventanaCompilador.analizadorSintactico
+                        ?.unidadDeCompilacion?.clase?.getIdentificador_clase()!!.lexema!!.substring(1)
+
+                Runtime.getRuntime().exec(comando, null, File("src/")).waitFor()
+                Runtime.getRuntime().exec(comando0, null, File("src/")).waitFor()
+                JOptionPane.showMessageDialog(null, "Se ejecuto correctamente")
+            } catch (e: IOException) {
+                e.printStackTrace()
+            } catch (e: InterruptedException) {
+                // TODO Auto-generated catch block
+                e.printStackTrace()
+            }
+
+        } else {
+            JOptionPane.showMessageDialog(null, "El archivo aún no ha sido compilado o tuvo errores en su compilacion",
+                    "Error", JOptionPane.ERROR_MESSAGE)
+        }
+    }
+
+    private fun agregarErroresSemanticos() {
+        var errores = ""
+        for (string in ventanaCompilador.analizadorSemantico?.errores!!) {
+            errores += string + "\n"
+        }
+
+        ventanaCompilador.erroresSemanticos!!.text  = errores
+        ventanaCompilador.erroresSemanticos!!.background = ventanaCompilador.editor!!.background
+        ventanaCompilador.erroresSemanticos!!.foreground = ventanaCompilador.editor!!.foreground
+
+        JOptionPane.showMessageDialog(null, "Compilado con "
+                + ventanaCompilador.analizadorSemantico!!.errores!!.size + " errores semanticos")
     }
 
     /**

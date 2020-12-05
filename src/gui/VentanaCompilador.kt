@@ -27,14 +27,13 @@ import javax.swing.tree.DefaultMutableTreeNode
 
 import controlador.ControladorVentana
 import lexico.AnalizadorLexico
-import sintactico.AnalizadorSintactico
+import semantico.AnalizadorSemantico
+import sintaxis.AnalizadorSintactico
 
 /**
- *  * @author Valentina osorio
-
  * Esta clase contiene la interfaz grafica del compilador
  *
-
+ * @author valentina osorio
  */
 class VentanaCompilador : JFrame(), ActionListener, KeyListener {
 
@@ -42,6 +41,7 @@ class VentanaCompilador : JFrame(), ActionListener, KeyListener {
     var panelErrores: JPanel? = null
     var panelSimbolos: JPanel? = null
     var panelErroresSintacticos: JPanel? = null
+    var panelErroresSemanticos: JPanel? = null
     private var panel: JPanel? = null
     /**
      * @return the panelArbol
@@ -92,7 +92,7 @@ class VentanaCompilador : JFrame(), ActionListener, KeyListener {
     private var gl_panel: GroupLayout? = null
     var analizadorLexico: AnalizadorLexico? = null
     var analizadorSintactico: AnalizadorSintactico? = null
-
+    var analizadorSemantico: AnalizadorSemantico? = null
     /**
      * @return the compilado
      */
@@ -146,6 +146,10 @@ class VentanaCompilador : JFrame(), ActionListener, KeyListener {
         panelEditor!!.setBounds(0, 0, 1280, 720)
         panelEditor!!.border = TitledBorder(null, "Editor", TitledBorder.LEADING, TitledBorder.TOP, null, null)
 
+        panelErroresSemanticos = JPanel(null)
+        panelErroresSemanticos!!.setBounds(0, 0, 1280, 720)
+        panelErroresSemanticos!!.border = TitledBorder(null, "Errores semánticos", TitledBorder.LEADING, TitledBorder.TOP, null, null)
+
         panelArbol = JPanel(null)
         panelArbol!!.setBounds(0, 0, 1280, 720)
         panelArbol!!.border = TitledBorder(null, "Arbol", TitledBorder.LEADING, TitledBorder.TOP, null, null)
@@ -156,7 +160,7 @@ class VentanaCompilador : JFrame(), ActionListener, KeyListener {
         tabbedPane.addTab("Errores", null, panelErrores, null)
         tabbedPane.addTab("Arbol", null, panelArbol, null)
         tabbedPane.addTab("Errores sintácticos", null, panelErroresSintacticos, null)
-
+        tabbedPane.addTab("Errores semánticos", null, panelErroresSemanticos, null)
 
         // Arbol
         arbolVisual = JTree(DefaultMutableTreeNode("Arbol visual"))
@@ -194,6 +198,11 @@ class VentanaCompilador : JFrame(), ActionListener, KeyListener {
         mntmGuardar!!.addActionListener(this)
         mnArchivo!!.add(mntmGuardar)
 
+
+
+        mntmEjecutar = JMenuItem("Ejecutar")
+        mntmEjecutar!!.addActionListener(this)
+        mnEjecutar!!.add(mntmEjecutar)
 
         mntmCompilar = JMenuItem("Compilar")
         mntmCompilar!!.addActionListener(this)
@@ -244,6 +253,26 @@ class VentanaCompilador : JFrame(), ActionListener, KeyListener {
         erroresSintacticos = JTable()
         erroresSintacticos!!.setBounds(2, 37, 1253, 601)
 
+        // Panel errores semánticos
+        erroresSemanticos = JTextArea()
+        erroresSemanticos!!.setBounds(2, 37, 1253, 601)
+        erroresSemanticos!!.lineWrap = true
+
+        scrollSimbolos = JScrollPane(simbolos)
+        scrollSimbolos!!.setBounds(2, 37, 1253, 601)
+        panelSimbolos!!.add(scrollSimbolos!!, BorderLayout.CENTER)
+
+        scrollErrores = JScrollPane(errores)
+        scrollErrores!!.setBounds(2, 37, 1253, 601)
+        panelErrores!!.add(scrollErrores!!, BorderLayout.CENTER)
+
+        scrollErroresSintacticos = JScrollPane(erroresSintacticos)
+        scrollErroresSintacticos!!.setBounds(2, 37, 1253, 601)
+        panelErroresSintacticos!!.add(scrollErroresSintacticos!!, BorderLayout.CENTER)
+
+        scrollErroresSemanticos = JScrollPane(erroresSemanticos)
+        scrollErroresSemanticos!!.setBounds(2, 37, 1253, 601)
+        panelErroresSemanticos!!.add(scrollErroresSemanticos!!, BorderLayout.CENTER)
     }
 
     override fun keyTyped(e: KeyEvent) {
@@ -272,6 +301,8 @@ class VentanaCompilador : JFrame(), ActionListener, KeyListener {
         } else if (e.source === mntmCompilar) {
             print("ioenf")
             controladorVentana?.compilar()
+        } else if (e.source === mntmEjecutar) {
+            controladorVentana!!.ejecutar()
         } else if (e.source === mntmNuevo) {
             controladorVentana!!.crear()
         }

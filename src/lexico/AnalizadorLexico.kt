@@ -3,12 +3,10 @@ package lexico
 import java.util.ArrayList
 
 /**
- * @author Valentina osorio
-
  * Clase que se encarga de manejar las identificaciones de los tokens y
  * almacenarlos
  *
-
+ * @author valentina osorio
  */
 class AnalizadorLexico
 /**

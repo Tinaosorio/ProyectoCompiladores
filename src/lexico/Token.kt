@@ -1,10 +1,9 @@
 package lexico
 
 /**
-  * @author Valentina osorio
-
  * Clase que pemite la abstraccion de un token de lenguaje de programacion
  *
+ * @author valentina osorio
  */
 class Token {
 
